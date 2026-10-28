@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naqsha — Only What's on Record</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ECE7D6;
+    --paper-line: #D8D0B8;
+    --ink: #24313D;
+    --ink-soft: #56636D;
+    --panel: #F5F1E4;
+    --residential: #B5502D;
+    --residential-dk: #8E3D22;
+    --commercial: #2E6E73;
+    --commercial-dk: #21545A;
+    --institutional: #C08A28;
+    --institutional-dk: #99691C;
+    --agricultural: #7C8F52;
+    --agricultural-dk: #616F3D;
+    --blank: #DAD4BF;
+    --focus: #24313D;
+    --shadow: rgba(36, 49, 61, 0.18);
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1E2420;
+      --paper-line: #333B34;
+      --ink: #E9E4D4;
+      --ink-soft: #A9A491;
+      --panel: #262D27;
+      --residential: #D06B44;
+      --residential-dk: #E68356;
+      --commercial: #4A9298;
+      --commercial-dk: #62ACB2;
+      --institutional: #D9A63F;
+      --institutional-dk: #EBBE5C;
+      --agricultural: #93A468;
+      --agricultural-dk: #A9BB7D;
+      --blank: #2B302A;
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #1E2420;
+    --paper-line: #333B34;
+    --ink: #E9E4D4;
+    --ink-soft: #A9A491;
+    --panel: #262D27;
+    --residential: #D06B44;
+    --residential-dk: #E68356;
+    --commercial: #4A9298;
+    --commercial-dk: #62ACB2;
+    --institutional: #D9A63F;
+    --institutional-dk: #EBBE5C;
+    --agricultural: #93A468;
+    --agricultural-dk: #A9BB7D;
+    --blank: #2B302A;
+    --shadow: rgba(0, 0, 0, 0.45);
+  }
+
+  :root[data-theme="light"] {
+    --paper: #ECE7D6;
+    --paper-line: #D8D0B8;
+    --ink: #24313D;
+    --ink-soft: #56636D;
+    --panel: #F5F1E4;
+    --residential: #B5502D;
+    --residential-dk: #8E3D22;
+    --commercial: #2E6E73;
+    --commercial-dk: #21545A;
+    --institutional: #C08A28;
+    --institutional-dk: #99691C;
+    --agricultural: #7C8F52;
+    --agricultural-dk: #616F3D;
+    --blank: #DAD4BF;
+    --shadow: rgba(36, 49, 61, 0.18);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image:
+      linear-gradient(var(--paper-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px clamp(16px, 4vw, 40px) 18px;
+    border-bottom: 1px solid var(--paper-line);
+  }
+
+  .title-block h1 {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(26px, 4vw, 38px);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .title-block p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+    max-width: 55ch;
+    line-height: 1.5;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--paper-line);
+    background: var(--panel);
+    color: var(--ink);
+    padding: 7px 12px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+    transition: border-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .chip:hover { border-color: var(--ink-soft); }
+  .chip[data-active="false"] { opacity: 0.4; }
+
+  .chip .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .chip .swatch.blank-swatch {
+    background: var(--blank);
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 3px);
+    border: 1px solid var(--paper-line);
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px clamp(16px, 4vw, 40px);
+    border-bottom: 1px solid var(--paper-line);
+    background: var(--panel);
+  }
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
+    padding: 7px 12px;
+    flex: 1 1 240px;
+    max-width: 360px;
+  }
+
+  .search-box input {
+    border: none;
+    background: none;
+    outline: none;
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    width: 100%;
+  }
+  .search-box input::placeholder { color: var(--ink-soft); }
+
+  .search-result-count { font-size: 11.5px; color: var(--ink-soft); }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--paper-line);
+    background: var(--paper);
+    color: var(--ink);
+    padding: 8px 14px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .action-btn:hover { border-color: var(--ink-soft); }
+  .action-btn[data-active="true"] {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    font-weight: 500;
+  }
+
+  .stats-summary {
+    display: flex;
+    gap: 16px;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+  .stats-summary strong { color: var(--ink); }
+
+  main { display: flex; align-items: flex-start; position: relative; }
+
+  .map-scroll {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: 50px clamp(16px, 4vw, 40px) 120px;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .map-scroll[data-mode="3d"] {
+    perspective: 1200px;
+    perspective-origin: 50% 20%;
+    padding-top: 40px;
+  }
+
+  .map-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 6), 64px);
+    grid-auto-rows: 64px;
+    gap: 12px;
+    width: max-content;
+    transition: transform 0.8s cubic-bezier(.2,.8,.2,1);
+    transform: rotateX(0deg);
+  }
+
+  .map-grid[data-mode="3d"] {
+    transform-style: preserve-3d;
+    transform: rotateX(55deg) rotateZ(-30deg);
+    margin-bottom: 120px;
+  }
+
+  .parcel {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    transform-style: preserve-3d;
+  }
+
+  .parcel:hover { transform: translateZ(10px); z-index: 30; }
+  .parcel[data-dimmed="true"] { opacity: 0.15; }
+
+  .parcel[data-selected="true"] {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    z-index: 35;
+  }
+
+  .parcel[data-searchmatch="true"] {
+    outline: 2px dashed var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* Colors by Zoning */
+  .parcel[data-type="agricultural"] { background: var(--agricultural); border-color: var(--agricultural-dk); }
+  .parcel[data-type="residential"] { background: var(--residential); border-color: var(--residential-dk); }
+  .parcel[data-type="commercial"] { background: var(--commercial); border-color: var(--commercial-dk); }
+  .parcel[data-type="institutional"] { background: var(--institutional); border-color: var(--institutional-dk); }
+
+  .parcel[data-type="blank"] {
+    background: var(--blank);
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.05) 5px, rgba(0,0,0,0.05) 6px);
+    border-color: var(--paper-line);
+  }
+
+  /* FIXED 3D EXTRUSION PIPELINE */
+  .parcel-prism {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(.2,.8,.2,1);
+  }
+
+  .prism-face {
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    backface-visibility: hidden;
+  }
+
+  .map-grid:not([data-mode="3d"]) .prism-face { display: none; }
+  .map-grid:not([data-mode="3d"]) .parcel-prism { transform: none !important; }
+
+  /* Precise prism face assembly matching object height */
+  .prism-face.top {
+    transform: translateZ(var(--height, 0px));
+    filter: brightness(1.1);
+    background-color: inherit;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 4px;
+  }
+  .prism-face.front {
+    height: var(--height, 0px);
+    top: auto;
+    bottom: 0;
+    transform-origin: bottom center;
+    transform: rotateX(-90deg);
+    filter: brightness(0.85);
+    background-color: inherit;
+  }
+  .prism-face.back {
+    height: var(--height, 0px);
+    top: 0;
+    bottom: auto;
+    transform-origin: top center;
+    transform: rotateX(90deg);
+    filter: brightness(0.95);
+    background-color: inherit;
+  }
+  .prism-face.left {
+    width: var(--height, 0px);
+    right: auto;
+    left: 0;
+    transform-origin: center left;
+    transform: rotateY(-90deg);
+    filter: brightness(0.75);
+    background-color: inherit;
+  }
+  .prism-face.right {
+    width: var(--height, 0px);
+    left: auto;
+    right: 0;
+    transform-origin: center right;
+    transform: rotateY(90deg);
+    filter: brightness(0.9);
+    background-color: inherit;
+  }
+
+  /* Apply explicit background colors to inner prism faces based on parcel type */
+  .parcel[data-type="agricultural"] .prism-face { background-color: var(--agricultural); }
+  .parcel[data-type="residential"] .prism-face { background-color: var(--residential); }
+  .parcel[data-type="commercial"] .prism-face { background-color: var(--commercial); }
+  .parcel[data-type="institutional"] .prism-face { background-color: var(--institutional); }
+  .parcel[data-type="blank"] .prism-face { background-color: var(--blank); }
+
+  .parcel .khasra-label {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.75);
+    font-family: 'IBM Plex Mono', monospace;
+    pointer-events: none;
+    z-index: 40;
+    transition: transform 0.8s cubic-bezier(.2,.8,.2,1);
+  }
+  :root[data-theme="dark"] .parcel .khasra-label { color: rgba(255,255,255,0.85); }
+
+  .map-grid[data-mode="3d"] .parcel .khasra-label {
+    position: relative;
+    bottom: 0;
+    left: 0;
+  }
+
+  /* Right Side Record Drawer */
+  .panel {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100%;
+    width: min(360px, 100%);
+    background: var(--panel);
+    border-left: 1px solid var(--paper-line);
+    box-shadow: -8px 0 24px var(--shadow);
+    transform: translateX(100%);
+    transition: transform 0.28s cubic-bezier(.2,.8,.2,1);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .panel[data-open="true"] { transform: translateX(0); }
+  .panel-inner { padding: 26px 24px 32px; }
+
+  .panel-close {
+    position: absolute;
+    top: 18px; right: 18px;
+    background: none;
+    border: 1px solid var(--paper-line);
+    color: var(--ink);
+    width: 30px; height: 30px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .panel-eyebrow { font-size: 11px; color: var(--ink-soft); margin: 0 0 6px; }
+  .panel h2 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 24px; margin: 0 0 18px; }
+
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--paper-line);
+    font-size: 12.5px;
+    gap: 12px;
+  }
+  .field-row span:first-child { color: var(--ink-soft); }
+  .field-row span:last-child { text-align: right; font-weight: 500; }
+
+  .source-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    background: rgba(124,143,82,0.18);
+    color: var(--agricultural-dk);
+  }
+
+  /* DeepSeek AI Chat Drawer & Toggle */
+  .ai-chat-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 40;
+    padding: 10px 18px;
+    background: var(--ink);
+    color: var(--paper);
+    border: 1px solid var(--paper-line);
+    border-radius: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 16px var(--shadow);
+    transition: transform 0.2s ease;
+  }
+  .ai-chat-btn:hover { transform: translateY(-2px); }
+
+  .chat-drawer {
+    position: fixed;
+    bottom: 74px;
+    right: 24px;
+    width: min(390px, calc(100vw - 32px));
+    height: 520px;
+    background: var(--panel);
+    border: 1px solid var(--paper-line);
+    border-radius: 8px;
+    box-shadow: 0 12px 32px var(--shadow);
+    z-index: 41;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .chat-drawer[data-open="true"] {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--paper-line);
+  }
+  .chat-header h3 { margin: 0; font-size: 14px; font-family: 'Fraunces', serif; }
+  .chat-subtitle { font-size: 10px; color: var(--ink-soft); }
+  .chat-close { background: none; border: none; font-size: 18px; color: var(--ink); cursor: pointer; }
+
+  .chat-config {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 10px;
+    align-items: center;
+    padding: 8px 14px;
+    background: rgba(0,0,0,0.03);
+    border-bottom: 1px solid var(--paper-line);
+    font-size: 10px;
+  }
+  .chat-config input {
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    color: var(--ink);
+    padding: 4px 6px;
+    font-size: 10px;
+    font-family: inherit;
+    border-radius: 3px;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .chat-msg {
+    max-width: 88%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .chat-msg.assistant {
+    align-self: flex-start;
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    color: var(--ink);
+  }
+  .chat-msg.loading { opacity: 0.6; font-style: italic; }
+
+  .chat-input-area {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    border-top: 1px solid var(--paper-line);
+    background: var(--panel);
+  }
+  .chat-input-area textarea {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 11.5px;
+    resize: none;
+    outline: none;
+  }
+  .chat-input-area button {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 4px;
+    padding: 0 14px;
+    font-family: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-block">
+    <h1>Naqsha — Cadastral Record</h1>
+    <p>Official digitized spatial map & land registry data. Toggle between 2D Blueprint and 3D Elevation columns to inspect built intensity.</p>
+  </div>
+  <div class="legend" id="legend"></div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-left">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search Khasra #, owner, or zoning..." oninput="handleSearch()">
+    </div>
+    <span class="search-result-count" id="searchCount">Showing all 18 plots</span>
+  </div>
+  <div class="toolbar-left">
+    <div class="stats-summary" id="statsSummary">
+      <span>Total Parcels: <strong id="totalParcelsCount">18</strong></span>
+      <span>Total Area: <strong id="totalAreaCount">21,850 m²</strong></span>
+    </div>
+    <label class="action-btn" style="cursor: pointer;">
+      Upload CSV
+      <input type="file" id="csvFileInput" accept=".csv" style="display: none;" onchange="handleCSVUpload(event)">
+    </label>
+    <button class="action-btn" id="modeToggle" onclick="toggle3DMode()">3D Elevation View</button>
+    <button class="action-btn" id="themeToggle" onclick="toggleTheme()">Dark Theme</button>
+  </div>
+</div>
+
+<main>
+  <div class="map-scroll" id="mapScroll" data-mode="2d">
+    <div class="map-grid" id="mapGrid" data-mode="2d" style="--cols: 6;"></div>
+  </div>
+</main>
+
+<!-- Detail Panel -->
+<div class="panel" id="detailPanel" data-open="false">
+  <div class="panel-inner">
+    <button class="panel-close" onclick="closePanel()">&times;</button>
+    <div class="panel-eyebrow">KHASRA RECORD DETAILS</div>
+    <h2 id="panelKhasra">Khasra #--</h2>
+    <div class="field-row"><span>Zoning Classification</span><span id="panelType">--</span></div>
+    <div class="field-row"><span>Registered Owner</span><span id="panelOwner">--</span></div>
+    <div class="field-row"><span>Area (Sqm)</span><span id="panelArea">--</span></div>
+    <div class="field-row"><span>Area (Bigha / Biswa)</span><span id="panelBigha">--</span></div>
+    <div class="field-row"><span>Building Height / Floors</span><span id="panelFloors">--</span></div>
+    <div class="field-row"><span>Mutation Status</span><span id="panelStatus">--</span></div>
+    <div class="field-row" style="margin-top: 14px;"><span>Registry Verification</span><span class="source-pill">VERIFIED RECORD</span></div>
+  </div>
+</div>
+
+<!-- Floating DeepSeek AI Assistant Drawer -->
+<button class="ai-chat-btn" onclick="toggleChatDrawer()">✨ Ask DeepSeek AI</button>
+
+<div id="aiChatDrawer" class="chat-drawer" data-open="false">
+  <div class="chat-header">
+    <div>
+      <h3>Naqsha DeepSeek Assistant</h3>
+      <div class="chat-subtitle">Local Ollama LLM Connection</div>
+    </div>
+    <button class="chat-close" onclick="toggleChatDrawer()">&times;</button>
+  </div>
+
+  <div class="chat-config">
+    <label for="localEndpoint">Endpoint:</label>
+    <input type="text" id="localEndpoint" value="http://localhost:11434/api/chat" />
+    <label for="modelName">Model Tag:</label>
+    <input type="text" id="modelName" value="deepseek-r1:7b" placeholder="deepseek-r1:7b" />
+  </div>
+
+  <div id="chatMessages" class="chat-messages">
+    <div class="chat-msg assistant">
+      Hello! I am connected to your local DeepSeek model. Ask me anything about Khasra details, zoning regulations, or total spatial areas!
+    </div>
+  </div>
+
+  <div class="chat-input-area">
+    <textarea id="chatInput" placeholder="Ask about Khasra 104, total area, or residential plots..." rows="2" onkeydown="handleChatKey(event)"></textarea>
+    <button onclick="sendChatMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  // Initial Cadastral Land Dataset
+  let parcels = [
+    { id: 1, khasra: "101", type: "agricultural", area: 1250, owner: "Ram Swaroop", floors: 1, status: "Mutated" },
+    { id: 2, khasra: "102", type: "residential", area: 450, owner: "Priya Sharma", floors: 3, status: "Mutated" },
+    { id: 3, khasra: "103", type: "commercial", area: 890, owner: "Apex Retailers Ltd", floors: 5, status: "Mutated" },
+    { id: 4, khasra: "104", type: "institutional", area: 2100, owner: "Govt School Board", floors: 4, status: "Verified" },
+    { id: 5, khasra: "105", type: "residential", area: 520, owner: "Amit Kumar", floors: 2, status: "Mutated" },
+    { id: 6, khasra: "106", type: "blank", area: 0, owner: "Unallocated Strip", floors: 0, status: "N/A" },
+    { id: 7, khasra: "107", type: "commercial", area: 1400, owner: "Grand Heights Hub", floors: 7, status: "Pending" },
+    { id: 8, khasra: "108", type: "residential", area: 600, owner: "Sunita Verma", floors: 2, status: "Mutated" },
+    { id: 9, khasra: "109", type: "agricultural", area: 3400, owner: "Harpal Singh", floors: 1, status: "Mutated" },
+    { id: 10, khasra: "110", type: "institutional", area: 1800, owner: "Community Health Clinic", floors: 3, status: "Verified" },
+    { id: 11, khasra: "111", type: "residential", area: 480, owner: "Deepak Joshi", floors: 3, status: "Mutated" },
+    { id: 12, khasra: "112", type: "blank", area: 0, owner: "Public Drainage Buffer", floors: 0, status: "N/A" },
+    { id: 13, khasra: "113", type: "agricultural", area: 4100, owner: "Balwan Singh", floors: 1, status: "Mutated" },
+    { id: 14, khasra: "114", type: "commercial", area: 1650, owner: "Skyline Infra Ltd", floors: 8, status: "Mutated" },
+    { id: 15, khasra: "115", type: "residential", area: 510, owner: "Meena Rastogi", floors: 2, status: "Mutated" },
+    { id: 16, khasra: "116", type: "residential", area: 700, owner: "Vikas Malhotra", floors: 4, status: "Mutated" },
+    { id: 17, khasra: "117", type: "institutional", area: 1900, owner: "Sub-Post Office & Bank", floors: 2, status: "Verified" },
+    { id: 18, khasra: "118", type: "blank", area: 0, owner: "Proposed Road Corridor", floors: 0, status: "N/A" }
+  ];
+
+  let selectedId = null;
+  let activeFilters = new Set(['agricultural', 'residential', 'commercial', 'institutional', 'blank']);
+
+  // CSV Data Import Support
+  function handleCSVUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const text = e.target.result;
+      parseCSV(text);
+    };
+    reader.readAsText(file);
+  }
+
+  function parseCSV(csvText) {
+    const lines = csvText.split(/\r\n|\n/).filter(line => line.trim() !== '');
+    if (lines.length < 2) return;
+
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const parsedData = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const currentline = lines[i].split(',').map(cell => cell.trim());
+      if (currentline.length < headers.length) continue;
+
+      const row = {};
+      headers.forEach((header, index) => {
+        row[header] = currentline[index];
+      });
+
+      parsedData.push({
+        id: i,
+        khasra: row.khasra || row.id || String(i),
+        type: (row.type || row.zoning || 'blank').toLowerCase(),
+        area: parseFloat(row.area || row.sqm || 0) || 0,
+        owner: row.owner || row.name || 'Unknown',
+        floors: parseInt(row.floors || row.height || 0, 10) || 0,
+        status: row.status || 'Recorded'
+      });
+    }
+
+    if (parsedData.length > 0) {
+      parcels = parsedData;
+      const cols = Math.ceil(Math.sqrt(parcels.length)) || 6;
+      document.getElementById('mapGrid').style.setProperty('--cols', cols);
+      updateSummaryStats();
+      renderLegend();
+      renderMap();
+      handleSearch();
+    }
+  }
+
+  function updateSummaryStats() {
+    const totalParcels = parcels.length;
+    const totalArea = parcels.reduce((sum, p) => sum + (p.area || 0), 0);
+    document.getElementById('totalParcelsCount').innerText = totalParcels;
+    document.getElementById('totalAreaCount').innerText = `${totalArea.toLocaleString()} m²`;
+  }
+
+  // Render Legend Filters
+  function renderLegend() {
+    const categories = [
+      { key: 'agricultural', label: 'Agricultural', color: 'var(--agricultural)' },
+      { key: 'residential', label: 'Residential', color: 'var(--residential)' },
+      { key: 'commercial', label: 'Commercial', color: 'var(--commercial)' },
+      { key: 'institutional', label: 'Institutional', color: 'var(--institutional)' },
+      { key: 'blank', label: 'Unallocated', color: 'blank' }
+    ];
+
+    const legendContainer = document.getElementById('legend');
+    legendContainer.innerHTML = categories.map(cat => `
+      <div class="chip" data-key="${cat.key}" data-active="${activeFilters.has(cat.key)}" onclick="toggleFilter('${cat.key}')">
+        <span class="swatch ${cat.color === 'blank' ? 'blank-swatch' : ''}" style="${cat.color !== 'blank' ? 'background:' + cat.color : ''}"></span>
+        <span>${cat.label}</span>
+      </div>
+    `).join('');
+  }
+
+  // Render 2D/3D Grid Parcels
+  function renderMap() {
+    const gridContainer = document.getElementById('mapGrid');
+    const is3DMode = document.getElementById('mapScroll').getAttribute('data-mode') === '3d';
+
+    gridContainer.innerHTML = parcels.map(p => {
+      const isDimmed = !activeFilters.has(p.type);
+      const isSelected = p.id === selectedId;
+      const heightPx = p.floors * 20;
+
+      return `
+        <div class="parcel" 
+             data-id="${p.id}"
+             data-type="${p.type}" 
+             data-dimmed="${isDimmed}"
+             data-selected="${isSelected}"
+             style="--height: ${heightPx}px;"
+             onclick="selectParcel(${p.id})">
+          <div class="parcel-prism">
+            <div class="prism-face top">
+              <span class="khasra-label">#${p.khasra}</span>
+            </div>
+            <div class="prism-face front"></div>
+            <div class="prism-face back"></div>
+            <div class="prism-face left"></div>
+            <div class="prism-face right"></div>
+          </div>
+          ${!is3DMode ? `<span class="khasra-label">#${p.khasra}</span>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Toggle Filters
+  function toggleFilter(key) {
+    if (activeFilters.has(key)) activeFilters.delete(key);
+    else activeFilters.add(key);
+    renderLegend();
+    renderMap();
+  }
+
+  // Toggle 3D Elevation Mode
+  function toggle3DMode() {
+    const scrollEl = document.getElementById('mapScroll');
+    const gridEl = document.getElementById('mapGrid');
+    const btn = document.getElementById('modeToggle');
+    const is3D = scrollEl.getAttribute('data-mode') === '3d';
+
+    if (is3D) {
+      scrollEl.setAttribute('data-mode', '2d');
+      gridEl.setAttribute('data-mode', '2d');
+      btn.setAttribute('data-active', 'false');
+      btn.innerText = '3D Elevation View';
+    } else {
+      scrollEl.setAttribute('data-mode', '3d');
+      gridEl.setAttribute('data-mode', '3d');
+      btn.setAttribute('data-active', 'true');
+      btn.innerText = '2D Blueprint View';
+    }
+    renderMap();
+  }
+
+  // Toggle Dark Theme
+  function toggleTheme() {
+    const root = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const currentTheme = root.getAttribute('data-theme') || 'light';
+    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    root.setAttribute('data-theme', nextTheme);
+    btn.innerText = nextTheme === 'dark' ? 'Light Theme' : 'Dark Theme';
+  }
+
+  // Select Parcel and Open Drawer
+  function selectParcel(id) {
+    selectedId = id;
+    renderMap();
+
+    const parcel = parcels.find(p => p.id === id);
+    if (!parcel) return;
+
+    document.getElementById('panelKhasra').innerText = `Khasra #${parcel.khasra}`;
+    document.getElementById('panelType').innerText = parcel.type.toUpperCase();
+    document.getElementById('panelOwner').innerText = parcel.owner;
+    document.getElementById('panelArea').innerText = parcel.area > 0 ? `${parcel.area.toLocaleString()} m²` : 'N/A';
+    document.getElementById('panelBigha').innerText = parcel.area > 0 ? `${(parcel.area / 800).toFixed(2)} Bigha` : 'N/A';
+    document.getElementById('panelFloors').innerText = parcel.floors > 0 ? `${parcel.floors} Floors (${parcel.floors * 3.2}m)` : 'Unbuilt Plot';
+    document.getElementById('panelStatus').innerText = parcel.status;
+
+    document.getElementById('detailPanel').setAttribute('data-open', 'true');
+  }
+
+  function closePanel() {
+    document.getElementById('detailPanel').setAttribute('data-open', 'false');
+    selectedId = null;
+    renderMap();
+  }
+
+  // Search Filter
+  function handleSearch() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    let matches = 0;
+
+    document.querySelectorAll('.parcel').forEach(el => {
+      const id = parseInt(el.getAttribute('data-id'));
+      const p = parcels.find(item => item.id === id);
+      const isMatch = q.length > 0 && (
+        p.khasra.toLowerCase().includes(q) ||
+        p.owner.toLowerCase().includes(q) ||
+        p.type.toLowerCase().includes(q)
+      );
+
+      el.setAttribute('data-searchmatch', isMatch ? 'true' : 'false');
+      if (isMatch || q.length === 0) matches++;
+    });
+
+    document.getElementById('searchCount').innerText = q.length > 0 ? `${matches} matching parcels` : `Showing all ${parcels.length} plots`;
+  }
+
+  // DeepSeek Chatbot Integration
+  function toggleChatDrawer() {
+    const drawer = document.getElementById('aiChatDrawer');
+    const isOpen = drawer.getAttribute('data-open') === 'true';
+    drawer.setAttribute('data-open', !isOpen);
+  }
+
+  function handleChatKey(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      sendChatMessage();
+    }
+  }
+
+  function cleanDeepSeekOutput(text) {
+    if (!text) return "";
+    return text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+  }
+
+  async function sendChatMessage() {
+    const inputEl = document.getElementById('chatInput');
+    const userText = inputEl.value.trim();
+    if (!userText) return;
+
+    const endpoint = document.getElementById('localEndpoint').value.trim();
+    const modelName = document.getElementById('modelName').value.trim() || 'deepseek-r1:7b';
+
+    appendMessage('user', userText);
+    inputEl.value = '';
+
+    const loadingEl = appendMessage('assistant', 'DeepSeek is thinking...', true);
+
+    const mapContext = parcels.map(p => 
+      `Khasra: ${p.khasra}, Type: ${p.type}, Area: ${p.area} sq.m, Owner: ${p.owner}, Status: ${p.status}, Floors: ${p.floors}`
+    ).join('\n');
+
+    const systemPrompt = `You are the AI assistant for Naqsha Land Records system. 
+Answer questions using this current on-record land data:
+${mapContext}
+
+Provide clear, accurate, and concise answers based on the record data provided.`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userText }
+          ],
+          stream: false
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP Error ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const rawContent = data.message?.content || data.response || "No response received.";
+      const finalAnswer = cleanDeepSeekOutput(rawContent);
+
+      loadingEl.classList.remove('loading');
+      loadingEl.innerText = finalAnswer || rawContent;
+
+    } catch (error) {
+      console.error('DeepSeek connection error:', error);
+      loadingEl.classList.remove('loading');
+      loadingEl.innerHTML = `<span style="color:#c92a2a;">Connection failed! Ensure Ollama is running at <code>${endpoint}</code> and CORS variable <code>OLLAMA_ORIGINS="*"</code> is set.</span>`;
+    }
+  }
+
+  function appendMessage(role, text, isLoading = false) {
+    const container = document.getElementById('chatMessages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `chat-msg ${role}${isLoading ? ' loading' : ''}`;
+    msgDiv.innerText = text;
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+    return msgDiv;
+  }
+
+  // Initial Setup
+  renderLegend();
+  renderMap();
+</script>
+</body>
+</html>
