@@ -1,0 +1,26 @@
+khasra,type,area,owner,floors,status
+501,commercial,2200,Global Trade Tower,12,Mutated
+502,commercial,1800,Fintech Park,10,Mutated
+503,commercial,1500,Metro Galleria,8,Verified
+504,residential,450,Rohan Deshmukh,4,Mutated
+505,blank,0,Pedestrian Plaza Strip,0,N/A
+506,commercial,2100,Nexus IT Hub,11,Mutated
+507,institutional,2800,Stock Exchange Regional Office,6,Verified
+508,commercial,1650,Corporate Suites,9,Pending
+509,residential,520,Sneha Kulkarni,3,Mutated
+510,commercial,1400,Auto Showroom Center,5,Mutated
+511,blank,0,Multi-Level Parking Reserve,0,N/A
+512,commercial,1900,Boutique Hotel,7,Mutated
+513,institutional,2300,Bank Head Office,5,Verified
+514,residential,600,Amitabh Joshi,4,Mutated
+515,commercial,1750,Media & Broadcasting House,8,Mutated
+516,commercial,1300,Hypermarket Hub,4,Mutated
+517,residential,480,Pooja Patil,3,Mutated
+518,blank,0,Green Promenade Corridor,0,N/A
+519,commercial,2000,Empress Business Heights,10,Mutated
+520,institutional,1950,Chamber of Commerce,4,Verified
+521,residential,550,Nikhil Shinde,3,Mutated
+522,commercial,1600,Creative Studio Hub,6,Mutated
+523,residential,510,Swati Pawar,3,Mutated
+524,agricultural,1800,Urban Nursery Yard,1,Pending
+525,blank,0,Utility Duct Passage,0,N/A

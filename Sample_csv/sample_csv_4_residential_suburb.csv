@@ -1,0 +1,26 @@
+khasra,type,area,owner,floors,status
+601,residential,650,Anand Rao,3,Mutated
+602,residential,580,Sunil Hegde,2,Mutated
+603,residential,720,Geeta Murthy,4,Mutated
+604,institutional,1800,St. Marys Primary School,3,Verified
+605,blank,0,Neighborhood Park,0,N/A
+606,residential,490,Kiran Reddy,2,Mutated
+607,residential,610,Venkat Raman,3,Mutated
+608,commercial,850,Daily Fresh Supermarket,3,Mutated
+609,residential,530,Lakshmi Naidu,2,Mutated
+610,residential,700,Srinivas Rao,4,Mutated
+611,blank,0,Civic Amenities Reservation,0,N/A
+612,residential,460,Padma Prasad,2,Mutated
+613,institutional,1650,Suburban Health Clinic,2,Verified
+614,residential,640,Mahesh Kumar,3,Mutated
+615,residential,520,Bhavana Raju,2,Mutated
+616,commercial,920,Community Shopping Complex,4,Pending
+617,residential,590,Ramesh Gowda,3,Mutated
+618,blank,0,Storm Water Drain Track,0,N/A
+619,residential,680,Aparna Shenoy,4,Mutated
+620,agricultural,2200,Narayana Swamy,1,Mutated
+621,residential,510,Vijay Mohan,2,Mutated
+622,institutional,1500,Elderly Care Center,2,Verified
+623,residential,630,Rekha Shetty,3,Mutated
+624,residential,470,Suresh Acharya,2,Mutated
+625,blank,0,Internal Road Turning Radius,0,N/A

@@ -1,0 +1,26 @@
+khasra,type,area,owner,floors,status
+301,institutional,3200,District Civil Court,4,Verified
+302,commercial,1200,Heritage Hotel Group,6,Mutated
+303,residential,550,Alok Srivastava,3,Mutated
+304,residential,480,Meena Saxena,2,Mutated
+305,blank,0,Municipal Utility Zone,0,N/A
+306,commercial,1850,City Center Mall,8,Mutated
+307,agricultural,2100,Shanti Devi,1,Pending
+308,residential,600,Rahul Tiwari,3,Mutated
+309,institutional,2500,Municipal Corporation Office,5,Verified
+310,residential,510,Preeti Yadav,2,Mutated
+311,blank,0,Public Square Buffer,0,N/A
+312,commercial,1400,Tech Park Arcade,7,Mutated
+313,residential,670,Sanjeev Bajaj,4,Mutated
+314,agricultural,3100,Mahesh Chand,1,Mutated
+315,institutional,1750,Fire Station Hub,2,Verified
+316,residential,430,Suresh Raina,2,Mutated
+317,commercial,980,Bazaar Complex,4,Mutated
+318,blank,0,Subway Corridor,0,N/A
+319,residential,520,Divya Prakash,3,Mutated
+320,agricultural,2800,Brijesh Patel,1,Mutated
+321,commercial,1600,Financial Express Hub,6,Pending
+322,institutional,2100,Government ITI College,3,Verified
+323,residential,610,Vandana Sharma,3,Mutated
+324,residential,580,Gaurav Mehta,2,Mutated
+325,blank,0,Transformer & Substation Reserve,0,N/A

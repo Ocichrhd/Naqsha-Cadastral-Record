@@ -1,0 +1,26 @@
+khasra,type,area,owner,floors,status
+401,agricultural,5200,Gurpreet Singh,1,Mutated
+402,agricultural,4800,Harbhajan Singh,1,Mutated
+403,agricultural,6100,Charanjit Lal,1,Mutated
+404,residential,420,Karamjit Kaur,2,Mutated
+405,blank,0,Canal Buffer Strip,0,N/A
+406,institutional,3100,Agricultural Research Station,2,Verified
+407,agricultural,4500,Jaswant Singh,1,Mutated
+408,commercial,1100,Agro Equipment Mart,3,Mutated
+409,agricultural,3900,Kuldeep Singh,1,Mutated
+410,residential,500,Manjit Kaur,2,Mutated
+411,blank,0,High Voltage Line Corridor,0,N/A
+412,agricultural,5600,Surinder Pal,1,Pending
+413,institutional,1900,Veterinary Clinic,2,Verified
+414,residential,620,Davinder Kumar,3,Mutated
+415,commercial,1350,Cold Storage Facility,4,Mutated
+416,agricultural,4100,Avtar Singh,1,Mutated
+417,residential,480,Simranjit Singh,2,Mutated
+418,blank,0,Village Forest Boundary,0,N/A
+419,agricultural,5000,Tarlochan Singh,1,Mutated
+420,commercial,900,Grain Market Yard,2,Mutated
+421,residential,550,Gurmeet Kaur,3,Mutated
+422,institutional,2400,Panchayat Bhawan,2,Verified
+423,agricultural,4700,Balwinder Singh,1,Mutated
+424,residential,490,Sukhwinder Kaur,2,Mutated
+425,blank,0,Pond Catchment Area,0,N/A
